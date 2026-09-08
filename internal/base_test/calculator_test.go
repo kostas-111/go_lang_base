@@ -7,6 +7,7 @@ import (
 )
 
 func Test_Add(t *testing.T) {
+  t.Parallel()
 
 	rsl := base.Add(1, 2)
 	expected := 3
