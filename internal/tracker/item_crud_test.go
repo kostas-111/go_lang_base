@@ -26,15 +26,14 @@ func TestTrackerGetItems(t *testing.T) {
           tracker.GetItems(),
       )
   })
-}
 
-func TestTrackerAddOne(t *testing.T) {
-    t.Parallel()
-    tracker := NewTracker()
-    item := Item{ID: "1", Name: "First"}
-    tracker.AddItem(item)
-    items := tracker.GetItems()
-    assert.Len(t, items, 1)
-    assert.Equal(t, item, items[0])
+  t.Run("check add one", func(t *testing.T) {
+      t.Parallel()
+      tracker := NewTracker()
+      item := Item{ID: "1", Name: "First"}
+      tracker.AddItem(item)
+      items := tracker.GetItems()
+      assert.Len(t, items, 1)
+      assert.Equal(t, item, items[0])
+  })
 }
-
