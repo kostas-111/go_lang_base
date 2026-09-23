@@ -8,8 +8,12 @@ func NewTracker() *Tracker {
   return &Tracker{}
 }
 
-func (t *Tracker) AddItem(item Item) {
+func (t *Tracker) AddItem(item Item) (Item, error) {
+  if t.FindIndexById(item.ID) != -1 {
+    return Item{}, ErrAlreadyExists
+  }
   t.items = append(t.items, item)
+  return item, nil
 }
 
 func (t *Tracker) GetItems() []Item {
@@ -24,8 +28,12 @@ func (t *Tracker) DeleteItem(index int) Item {
     return item
 }
 
-func (t *Tracker) UpdateItem(index int, item Item) {
-    t.items[index] = item
+func (t *Tracker) UpdateItem(index int, item Item) error {
+  if index < 0 || index >= len(t.items) {
+    return  ErrNotFound
+  }
+  t.items[index] = item
+  return nil
 }
 
 func (t *Tracker) FindIndexById(id string) int {

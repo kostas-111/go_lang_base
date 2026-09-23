@@ -1,5 +1,7 @@
 package tracker
 
+import "fmt"
+
 type UI struct {
   In Input
   Out Output
@@ -29,6 +31,8 @@ func (u UI) Run() {
       u.Out.Out("not found action")
       continue
     }
-    action.Done(u.In, u.Out, u.Tracker)
+    if err := action.Done(u.In, u.Out, u.Tracker); err != nil {
+        u.Out.Out(fmt.Sprintf("error: %v", err))
+    }
   }
 }

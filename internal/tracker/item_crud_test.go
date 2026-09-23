@@ -36,4 +36,37 @@ func TestTrackerGetItems(t *testing.T) {
       assert.Len(t, items, 1)
       assert.Equal(t, item, items[0])
   })
+
+  t.Run("error update - not found", func(t *testing.T) {
+      t.Parallel()
+
+      tracker := NewTracker()
+      item := Item{
+          ID:   "1",
+          Name: "First Item",
+      }
+
+      err := tracker.UpdateItem(0, item)
+      assert.ErrorIs(t, err, ErrNotFound)
+  })
+
+  t.Run("error add item - duplicate id", func(t *testing.T) {
+          t.Parallel()
+
+          tr := NewTracker()
+          first := Item{ID: "1", Name: "First Item"}
+          second := Item{ID: "1", Name: "Second Item"}
+
+          _, err := tr.AddItem(first)
+          assert.NoError(t, err)
+
+          got, err := tr.AddItem(second)
+
+          assert.ErrorIs(t, err, ErrAlreadyExists)
+          assert.Equal(t, Item{}, got)
+
+          items := tr.GetItems()
+          assert.Len(t, items, 1)
+          assert.Equal(t, "First Item", items[0].Name)
+      })
 }
