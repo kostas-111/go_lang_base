@@ -1,10 +1,15 @@
 package api
 
 type ItemRequest struct {
-  ID   string `json:"id"`
-  Name string `json:"name"`
+	ID   string `json:"id"`
+	Name string `json:"name"`
+}
+
+type ItemResponse struct {
+	ID   string `json:"id"`
+	Name string `json:"name"`
 }
 
 type GetItemsResponse struct {
-  Items []ItemRequest `json:"items"`
+	Items []ItemRequest `json:"items"`
 }

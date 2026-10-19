@@ -19,16 +19,20 @@ func NewRepoPg(pool *pgxpool.Pool) *RepoPg {
 	return &RepoPg{pool: pool}
 }
 
-func (r *RepoPg) Create(ctx context.Context, it tracker.Item) error {
-	_, err := r.pool.Exec(
+func (r *RepoPg) Create(ctx context.Context, it tracker.Item) (tracker.Item, error) {
+	var id, name string
+
+	err := r.pool.QueryRow(
 		ctx,
-		`insert into items(id, name) values($1, $2)`,
+		`insert into items(id, name) values($1, $2) returning id::text, name`,
 		it.ID, it.Name,
-	)
+	).Scan(&id, &name)
 	if err != nil {
-		return fmt.Errorf("r.pool.Exec: %w", err)
+		return tracker.Item{}, fmt.Errorf("r.pool.QueryRow: %w", err)
 	}
-	return nil
+
+	it.ID, it.Name = id, name
+	return it, nil
 }
 
 func (r *RepoPg) List(ctx context.Context) ([]tracker.Item, error) {

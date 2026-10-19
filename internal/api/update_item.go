@@ -35,5 +35,8 @@ func (s *Server) UpdateItem(c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusInternalServerError, "internal server error")
 	}
 
-	return c.Status(fiber.StatusOK).JSON(item)
+	return c.Status(fiber.StatusOK).JSON(ItemResponse{
+		ID:   item.ID,
+		Name: item.Name,
+	})
 }

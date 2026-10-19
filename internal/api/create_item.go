@@ -8,26 +8,29 @@ import (
 )
 
 type CreateItemRequest struct {
-  Name string `json:"name"`
+	Name string `json:"name"`
 }
 
 func (s *Server) CreateItem(c *fiber.Ctx) error {
-  var req CreateItemRequest
-  if err := c.BodyParser(&req); err != nil {
-    return fiber.NewError(fiber.StatusBadRequest, "invalid JSON body")
-  }
-  if req.Name == "" {
-      return fiber.NewError(fiber.StatusBadRequest, "name is required")
-  }
+	var req CreateItemRequest
+	if err := c.BodyParser(&req); err != nil {
+		return fiber.NewError(fiber.StatusBadRequest, "invalid JSON body")
+	}
+	if req.Name == "" {
+		return fiber.NewError(fiber.StatusBadRequest, "name is required")
+	}
 
-  err := s.Repository.Create(c.Context(), tracker.Item{
-    ID:   uuid.New().String(),
-    Name: req.Name,
-  })
-  if err != nil {
-    log.Errorw("s.Repository.Create", err)
-    return fiber.NewError(fiber.StatusInternalServerError, "internal server error")
-  }
+	item, err := s.Repository.Create(c.Context(), tracker.Item{
+		ID:   uuid.New().String(),
+		Name: req.Name,
+	})
+	if err != nil {
+		log.Errorw("s.Repository.Create", err)
+		return fiber.NewError(fiber.StatusInternalServerError, "internal server error")
+	}
 
-  return c.Status(fiber.StatusCreated).JSON(fiber.Map{})
+	return c.Status(fiber.StatusCreated).JSON(ItemResponse{
+		ID:   item.ID,
+		Name: item.Name,
+	})
 }
